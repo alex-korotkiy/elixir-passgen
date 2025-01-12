@@ -140,6 +140,7 @@ defmodule Generator do
     result = Keyword.put(result, :max_length, max_length)
 
     result = Keyword.put(result, :separator, Keyword.get(opts, :separator, "-"))
+    result = Keyword.put(result, :file, Keyword.get(opts, :file))
 
     cond do
       Enum.empty?(validation_errors) ->
@@ -162,7 +163,8 @@ defmodule Generator do
           uppercase: :boolean,
           numbers: :boolean,
           symbols: :boolean,
-          separator: :string
+          separator: :string,
+          file: :string
         ]
       )
 
@@ -258,7 +260,14 @@ defmodule Generator do
     args = System.argv()
     case parse_args(args) do
       {:ok, opts} ->
-        IO.puts(generate(opts))
+        password = generate(opts)
+        file = Keyword.get(opts, :file)
+        cond do
+          file !=nil && file !="" ->
+            File.write(file, password)
+            IO.puts("Password saved to file: " <> file)
+          true -> IO.puts(password)
+        end
       _ -> IO.puts("Unable to generate password")
     end
   end
