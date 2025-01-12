@@ -1,6 +1,8 @@
 # Generator
 
-**TODO: Add description**
+An example of running:
+
+mix run lib/generator.ex -- --type=words --min-length=10 --max-length=20 --numbers --symbols --uppercase --separator=+
 
 ## Installation
 
