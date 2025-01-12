@@ -256,8 +256,8 @@ defmodule Generator do
     end
   end
 
-  def main do
-    args = System.argv()
+  def main(args) do
+    #args = System.argv()
     case parse_args(args) do
       {:ok, opts} ->
         password = generate(opts)
@@ -274,4 +274,4 @@ defmodule Generator do
 
 end
 
-Generator.main()
+#Generator.main()
