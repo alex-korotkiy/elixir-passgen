@@ -256,20 +256,37 @@ defmodule Generator do
     end
   end
 
-  def main(args) do
-    #args = System.argv()
-    case parse_args(args) do
+  def generate_worker(args, main_pid) do
+
+    result = case parse_args(args) do
       {:ok, opts} ->
         password = generate(opts)
         file = Keyword.get(opts, :file)
         cond do
           file !=nil && file !="" ->
             File.write(file, password)
-            IO.puts("Password saved to file: " <> file)
-          true -> IO.puts(password)
+            {:ok, "Password saved to file: " <> file}
+          true -> {:ok, password}
         end
-      _ -> IO.puts("Unable to generate password")
+      _ -> {:error, "Unable to generate password"}
     end
+
+    send(main_pid, result)
+  end
+
+  def main(args) do
+
+    #args = System.argv()
+    main_pid = self()
+
+    spawn(fn -> generate_worker(args, main_pid) end)
+
+    receive do
+      {:ok, value} -> IO.puts(value)
+      {:error, value} -> IO.puts(value)
+      _ -> IO.puts("Something wrong happened")
+    end
+
   end
 
 end
